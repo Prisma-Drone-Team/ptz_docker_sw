@@ -5,6 +5,7 @@ read -p "Container name >> " cnt_name
 #-v ./src:/root/ros2_ws/src \
 docker run -it --privileged -v /dev/bus/usb:/dev/bus/usb \
 -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+-v ./src:/root/ros2_ws/src \
 -e DISPLAY=$DISPLAY \
 --network host \
 --workdir="/root/ros2_ws" \

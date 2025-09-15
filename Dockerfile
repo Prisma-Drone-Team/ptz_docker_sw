@@ -20,7 +20,12 @@ RUN apt install -y ros-humble-rmw-cyclonedds-cpp
 RUN pip install --upgrade pip
 RUN pip install requests
 
-# setup .bashrc and put it in the entrypoint
+# create workspace
+RUN mkdir -p ros2_ws/src
+WORKDIR /root/ros2_ws/
+RUN source /opt/ros/humble/setup.bash && colcon build
+
+# setup .bashrc
 RUN echo "" >> /root/.bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
 RUN echo "source /root/ros2_ws/install/setup.bash" >> /root/.bashrc
@@ -28,11 +33,9 @@ RUN echo "" >> /root/.bashrc
 RUN echo "export ROS_DOMAIN_ID=71" >> /root/.bashrc
 RUN echo "export ROS_LOCALHOST_ONLY=0" >> /root/.bashrc
 RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc
+# remove safety check to solve dubious ownership of git repositories
+RUN echo "git config --global --add safe.directory '*'" >> /root/.bashrc
 
-# create workspace
-RUN mkdir -p ros2_ws/src
-WORKDIR /root/ros2_ws/
-RUN colcon build
 
 # git clone
 WORKDIR /root/ros2_ws/src

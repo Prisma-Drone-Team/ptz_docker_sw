@@ -28,7 +28,14 @@ Either from outside or inside the Docker container, from the main repository fol
 ```
 git pull --recurse-submodules
 ```
-It could ask you username and password.
+It could ask you username and password. It will pull a fixed commit specified in the submodules config files.
+
+## Update submodules to the latest commit on the current branch
+Either from outside or inside the Docker container, from the main repository folder, simply run:
+```
+git submodule update --remote --merge
+```
+It could ask you username and password. It will pull the latest commit on the branch specified in the submodule config files.
 
 ## Update main repository
 Either from outside or inside the Docker container, from the main repository folder, simply run:

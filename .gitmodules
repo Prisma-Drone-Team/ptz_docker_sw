@@ -22,3 +22,5 @@
 	path = src/axis_roi_calculation
 	url = https://github.com/pakocero/axis_roi_calculation.git
 	branch = master
+[submodule "./src/ptz_manager"]
+	branch = MDPI-drones

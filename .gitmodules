@@ -18,7 +18,7 @@
 	path = src/camera_info_manager_py
 	url = https://github.com/ros-perception/image_common
 	branch = humble
-[submodule "src/axis_roi_calculation"]
-	path = src/axis_roi_calculation
-	url = https://github.com/pakocero/axis_roi_calculation.git
+[submodule "src/roi_calculation_yolo"]
+	path = src/roi_calculation_yolo
+	url = https://github.com/pakocero/roi_calculation_yolo.git
 	branch = master

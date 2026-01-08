@@ -19,6 +19,9 @@ RUN apt install -y ros-humble-rmw-cyclonedds-cpp
 # install python dependencies
 RUN pip install --upgrade pip
 RUN pip install requests
+# install YOLO and aux pkgs
+RUN pip install ultralytics --ignore-installed
+RUN pip install ros2_numpy
 
 # create workspace
 RUN mkdir -p ros2_ws/src
@@ -51,11 +54,12 @@ COPY ./src .
 WORKDIR /root/ros2_ws
 # solve ROS dependencies
 RUN ls ./src
-RUN source /opt/ros/humble/setup.bash && source /root/ros2_ws/install/setup.bash && rosdep install --from-paths ./src/zbar_ros --ignore-src -r -y
+RUN source /opt/ros/humble/setup.bash && source /root/ros2_ws/install/setup.bash 
+#&& rosdep install --from-paths ./src/zbar_ros --ignore-src -r -y
 # compile workspace
 RUN source /opt/ros/humble/setup.bash && \
 	source /root/ros2_ws/install/setup.bash && \
-	colcon build
+	colcon build --packages-skip zbar_ros
 # recompile axis msgs because it fails first time
 WORKDIR /root/ros2_ws	
 RUN source /opt/ros/humble/setup.bash && \

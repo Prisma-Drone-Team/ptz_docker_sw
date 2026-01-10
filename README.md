@@ -26,7 +26,7 @@ sudo systemctl restart docker
 
 ## Clone repository
 ```bash
-git clone --recurse-submodules -b MDPI-drones https://github.com/Prisma-Drone-Team/ptz_docker_sw
+git clone --recurse-submodules -b paper https://github.com/Prisma-Drone-Team/ptz_docker_sw
 ```
 
 ## Build docker image

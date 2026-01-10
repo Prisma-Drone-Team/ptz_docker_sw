@@ -90,7 +90,7 @@ All parameters are configured in `src/ptz_manager/param/param.yaml`. Below is a 
 - **`qr_code_side_mm`**: Expected QR code side length in millimeters (used for distance calculation)
 
 #### Coverage Control Parameters
-These parameters control the velocity-based coverage behavior:
+These parameters control the coverage behavior:
 
 - **`cover_z_distr_mean`**: Mean height (in meters) for random coverage points (normal distribution)
 - **`cover_z_distr_stddev`**: Standard deviation of height distribution

@@ -54,12 +54,12 @@ COPY ./src .
 WORKDIR /root/ros2_ws
 # solve ROS dependencies
 RUN ls ./src
-RUN source /opt/ros/humble/setup.bash && source /root/ros2_ws/install/setup.bash 
-#&& rosdep install --from-paths ./src/zbar_ros --ignore-src -r -y
+RUN source /opt/ros/humble/setup.bash && source /root/ros2_ws/install/setup.bash \
+	&& rosdep install --from-paths ./src/zbar_ros --ignore-src -r -y
 # compile workspace
 RUN source /opt/ros/humble/setup.bash && \
 	source /root/ros2_ws/install/setup.bash && \
-	colcon build --packages-skip zbar_ros
+	colcon build
 # recompile axis msgs because it fails first time
 WORKDIR /root/ros2_ws	
 RUN source /opt/ros/humble/setup.bash && \

@@ -55,6 +55,14 @@ If you have modified the image name, remember to change it inside this file also
 
 ## Software configuration
 
+### Network configuration
+
+#### Camera IP address
+The camera IP address can be setup in the file found in `src/axis_camera/launch/axis_camera.launch`. Here you can also configure other camera connection parameters such as username and password, if an encrypted connection is used, and connection port.
+
+#### PC connection
+PC is connected to the camera through an Ethernet switch capable of PoE (Power over Ethernet). Create a new Ethernet Network connection, and give it a name of your choice. In the *IPv4 Settings* panel, choose an IP address for your PC and a proper netmask (e.g. `192.164.3.54`, netmask `24`). In order to use both a wired Ethernet connection to the camera and a wireless connection to the Internet, leave the *Gateway* field empty.
+
 ### Camera calibration
 
 #### Extrinsic
@@ -122,6 +130,28 @@ ros2 launch ptz_manager ptz_manager.launch
 ```
 
 It will launch all the required ROS2 nodes, included visualization with RViz.
+
+### Launch a cover task manually
+You have to publish once on the topic `/seed_pdt_camera/command` a proper cover command. It follows the format:
+
+```
+cover(zone,target_id,task_id,deadline)
+```
+where:
+* `zone`: it is specified as a set of 4 corners, e.g. `(1,0),(5,0),(5,3),(1,3)`; can also be `null`, in which case it starts a cover with the default area specified in the `arena_corner_points_from_map` parameter in the `ptz_manager` configuration file
+* `target_id`: QR code task ID to find
+* `task_id`: task id of the given command
+* `deadline`: period of time in which the task should be accomplished, given in the format `h:mm:ss` (e.g. `0:13:00` meaning a period of 13 minutes from the command receipt)
+
+An example command:
+
+```bash
+ros2 topic pub /seed_pdt_camera/command std_msgs/msg/String "{'data' : 'cover(null,34,2,0:13:00)'}" -1
+```
+Or, if you want to specify a zone:
+```bash
+ros2 topic pub /seed_pdt_camera/command std_msgs/msg/String "{'data' : 'cover((1,0),(5,0),(5,3),(1,3),34,2,0:13:00)'}" -1
+```
 
 ## Update submodules
 Either from outside or inside the Docker container, from the main repository folder, simply run:

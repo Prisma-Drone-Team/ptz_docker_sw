@@ -122,7 +122,27 @@ These parameters control the coverage behavior:
 - **`cover_vel_ctrl_goal_reach_tilt_thr`**: Tilt error threshold to consider goal reached (radians)
 - **`cover_vel_ctrl_goal_reach_zoom_thr`**: Zoom error threshold to consider goal reached 
 
-## Run the software
+## Launch the simulation
+
+Once the workspace is built and sourced, inside the container, start the Gazebo simulation using the provided launch file:
+
+```bash
+ros2 launch ptz_gz_sim launch_sim.launch.py
+```
+
+The command will:
+
+1. Start Gazebo with the `leonardo_race.sdf` world found in `worlds/`
+2. Spawn the PTZ camera robot description (`axis_camera_gazebo.xacro`) and publish its TF via `robot_state_publisher`.
+3. Launch the `ros_gz_bridge` to connect ROS 2 topics with Gazebo messages (clock, images, camera info, zoom commands, etc.).
+4. Start the controller manager along with several ros2_control plugins:
+   - `joint_state_broadcaster` for reporting joint states.
+   - `position_controller` and `velocity_controller` for the pan/tilt joints.
+   These are spawned via the `controller_manager` nodes and configured by the URDF's `libgz_ros2_control` tags along with parameters from `config/controller_params.yaml`.
+5. A `fake_axis_camera_node` is launched to mimic the axis camera interface.
+6. RViz2 is started with a default configuration from the `ptz_manager` package so you can visualize the camera and TF frames.
+
+## Run the software with hardware
 Inside the container, run the following command:
 
 ```bash

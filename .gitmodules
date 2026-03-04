@@ -22,3 +22,7 @@
 	path = src/roi_calculation_yolo
 	url = https://github.com/pakocero/roi_calculation_yolo.git
 	branch = master
+[submodule "src/ptz_gz_sim"]
+	path = src/ptz_gz_sim
+	url = https://github.com/Prisma-Drone-Team/ptz_gz_sim.git
+	branch = master

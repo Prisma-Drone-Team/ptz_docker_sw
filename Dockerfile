@@ -8,13 +8,19 @@ ARG ROS2_LATEST_ARCHIVE_KEYRING="/usr/share/keyrings/ros2-latest-archive-keyring
 RUN sudo rm -f ${ROS2_LATEST_ARCHIVE_KEYRING}
 RUN sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o ${ROS2_LATEST_ARCHIVE_KEYRING}
 
-# install ping
+# install ping and pip
 RUN apt update && apt install -y --no-install-recommends \
 	iputils-ping \
-	pip
+	pip 
 
-# install Cyclone DDS
-RUN apt install -y ros-humble-rmw-cyclonedds-cpp
+# install Cyclone DDS and ROS stuff
+RUN apt install -y --no-install-recommends \
+	ros-humble-rmw-cyclonedds-cpp \
+	ros-humble-joint-state-publisher \
+	ros-humble-ros2-control \
+	ros-humble-ros2-controllers \
+	ros-humble-gazebo-ros2-control \
+	ros-humble-gz-ros2-control
 
 # install python dependencies
 RUN pip install --upgrade pip

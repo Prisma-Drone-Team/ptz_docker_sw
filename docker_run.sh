@@ -20,11 +20,11 @@ else
     docker run -it --privileged -v /dev/bus/usb:/dev/bus/usb \
     --shm-size=8G \
     -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
-    -v ./src:/root/ros2_ws/src \
-    -v ./.git:/root/ros2_ws/.git \
-    -v ./.gitmodules:/root/ros2_ws/.gitmodules \
+    -v ./src:/root/ptz_ws/src \
+    -v ./.git:/root/ptz_ws/.git \
+    -v ./.gitmodules:/root/ptz_ws/.gitmodules \
     -e DISPLAY=$DISPLAY \
     --network host \
-    --workdir="/root/ros2_ws" \
+    --workdir="/root/ptz_ws" \
     --name=$cnt_name $img_name bash
 fi

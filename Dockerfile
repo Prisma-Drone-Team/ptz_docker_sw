@@ -30,14 +30,14 @@ RUN pip install ultralytics --ignore-installed
 RUN pip install ros2_numpy
 
 # create workspace
-RUN mkdir -p ros2_ws/src
-WORKDIR /root/ros2_ws/
+RUN mkdir -p ptz_ws/src
+WORKDIR /root/ptz_ws/
 RUN source /opt/ros/humble/setup.bash && colcon build
 
 # setup .bashrc
 RUN echo "" >> /root/.bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
-RUN echo "source /root/ros2_ws/install/setup.bash" >> /root/.bashrc
+RUN echo "source /root/ptz_ws/install/setup.bash" >> /root/.bashrc
 RUN echo "" >> /root/.bashrc
 RUN echo "export ROS_DOMAIN_ID=71" >> /root/.bashrc
 RUN echo "export ROS_LOCALHOST_ONLY=0" >> /root/.bashrc
@@ -47,7 +47,7 @@ RUN echo "git config --global --add safe.directory '*'" >> /root/.bashrc
 
 
 # git clone
-WORKDIR /root/ros2_ws/src
+WORKDIR /root/ptz_ws/src
 COPY ./src .
 # RUN git clone https://github.com/clearpathrobotics/ptz_action_server.git -b ros2
 # RUN git clone https://github.com/ros-perception/image_common camera_info_manager_py -b humble
@@ -57,19 +57,22 @@ COPY ./src .
 #RUN apt update && apt install -y --no-install-recommends ros-humble-zbar-ros
 #RUN ls
 
-WORKDIR /root/ros2_ws
+WORKDIR /root/ptz_ws
 # solve ROS dependencies
 RUN ls ./src
-RUN source /opt/ros/humble/setup.bash && source /root/ros2_ws/install/setup.bash \
+RUN source /opt/ros/humble/setup.bash && source /root/ptz_ws/install/setup.bash \
 	&& rosdep install --from-paths ./src/zbar_ros --ignore-src -r -y
 # compile workspace
 RUN source /opt/ros/humble/setup.bash && \
-	source /root/ros2_ws/install/setup.bash && \
+    colcon build --packages-select ptz_action_server_msgs
+    
+RUN source /opt/ros/humble/setup.bash && \
+	source /root/ptz_ws/install/setup.bash && \
 	colcon build
 # recompile axis msgs because it fails first time
-WORKDIR /root/ros2_ws	
+WORKDIR /root/ptz_ws	
 RUN source /opt/ros/humble/setup.bash && \
-	source /root/ros2_ws/install/setup.bash && \
+	source /root/ptz_ws/install/setup.bash && \
 	colcon build --packages-select axis_msgs
 
 

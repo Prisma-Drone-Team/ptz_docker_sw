@@ -6,7 +6,7 @@
                 "${workspaceFolder}/**",
                 "/opt/ros/humble/include/**",
                 "../install/**",
-                "/usr/include/**"
+                "/usr/include/gz/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

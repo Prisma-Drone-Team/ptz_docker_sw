@@ -142,6 +142,12 @@ The command will:
 5. A `fake_axis_camera_node` is launched to mimic the axis camera interface.
 6. RViz2 is started with a default configuration from the `ptz_manager` package so you can visualize the camera and TF frames.
 
+In order to launch a cover task with a proper zone in the simulation environment, this is the command:
+
+```bash
+ros2 topic pub /seed_pdt_camera/command std_msgs/msg/String "{'data' : 'cover((13,1),(13,5),(10,1),(10,5),34,2,0:13:00)'}" -1
+```
+
 ## Run the software with hardware
 Inside the container, run the following command:
 

@@ -21,26 +21,59 @@ RUN apt update && apt install -y --no-install-recommends \
 	lsb-release \
 	gnupg 
 
-# Install Gazebo Garden
+# Install Gazebo Garden + Development headers
 RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
-RUN apt update && apt install -y gz-garden
+# change rosdep rules to resolve Gazebo Garden instead of default Fortress
+RUN wget https://raw.githubusercontent.com/osrf/osrf-rosdep/master/gz/00-gazebo.list -O /etc/ros/rosdep/sources.list.d/00-gazebo.list
+RUN rosdep update
+# check that resolve works
+RUN rosdep resolve gz-garden
+
+RUN apt update && apt install -y \
+    gz-garden \
+    libgz-sim7-dev \
+    python3-gz-sim7 \
+    && rm -rf /var/lib/apt/lists/*
 
 # install Cyclone DDS and ROS stuff
-RUN apt update && apt install -y --no-install-recommends \
+RUN export GZ_VERSION=garden && apt update && apt install -y --no-install-recommends \
 	ros-humble-rmw-cyclonedds-cpp \
 	ros-humble-joint-state-publisher \
 	ros-humble-ros2-control \
 	ros-humble-ros2-controllers \
-	ros-humble-gz-ros2-control \
-	ros-humble-ros-gz \
-	ros-humble-ros-gz-sim \
-	ros-humble-ros-gz-bridge \
+	#ros-humble-gz-ros2-control \
+	#ros-humble-ros-gz \
+	#ros-humble-ros-gz-sim \
+	ros-humble-ros-gzgarden-bridge \
 	ros-humble-rviz2 \
 	ros-humble-rqt* \
 	ros-humble-xacro \
 	ros-humble-vision-opencv \
-	ros-humble-rviz-visual-tools
+	ros-humble-rviz-visual-tools \
+	ros-humble-ros-gzgarden \
+	&& rm -rf /var/lib/apt/lists/*
+
+# build gz-ros2-control from source to be compatible with Garden
+# in another workspace so it does not appear in actual work files
+WORKDIR /root
+RUN mkdir -p gz_ros2_control_ws/src
+WORKDIR /root/gz_ros2_control_ws/src
+RUN git clone -b iron https://github.com/ros-controls/gz_ros2_control.git
+WORKDIR /root/gz_ros2_control_ws
+RUN source /opt/ros/humble/setup.bash && \
+	export GZ_VERSION=garden && \
+	rosdep update && \
+	rosdep install -r --from-paths src --ignore-src --rosdistro humble -y
+
+RUN source /opt/ros/humble/setup.bash && \
+	export GZ_VERSION=garden && \
+	colcon build 
+	#--symlink-install --cmake-args \
+	#-DIGNITION_VERSION=garden \
+    #-DGZ_VERSION=garden \
+    #-DCMAKE_MACOSX_RPATH=1
+
 
 # install python dependencies
 RUN pip install --upgrade pip
@@ -57,11 +90,16 @@ RUN source /opt/ros/humble/setup.bash && colcon build
 # setup .bashrc
 RUN echo "" >> /root/.bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
+RUN echo "source /root/gz_ros2_control_ws/install/setup.bash" >> /root/.bashrc
 RUN echo "source /root/ptz_ws/install/setup.bash" >> /root/.bashrc
 RUN echo "" >> /root/.bashrc
 RUN echo "export ROS_DOMAIN_ID=90" >> /root/.bashrc
 RUN echo "export ROS_LOCALHOST_ONLY=0" >> /root/.bashrc
 RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc
+RUN echo "export GZ_SIM_SYSTEM_PLUGIN_PATH=/root/ptz_ws/install/ptz_gz_sim/share/ptz_gz_sim/plugins:${GZ_SIM_SYSTEM_PLUGIN_PATH}" >> /root/.bashrc
+RUN echo "export GZ_SIM_RESOURCE_PATH=/root/ptz_ws/install/ptz_gz_sim/share/ptz_gz_sim/models:${GZ_SIM_RESOURCE_PATH}" >> /root/.bashrc
+RUN echo "export GZ_SIM_RESOURCE_PATH=/root/ptz_ws/install/ptz_gz_sim/share/ptz_gz_sim/worlds:${GZ_SIM_RESOURCE_PATH}" >> /root/.bashrc
+
 # force gazebo garden
 RUN echo "export GZ_VERSION=garden" >> /root/.bashrc
 # remove safety check to solve dubious ownership of git repositories
@@ -92,9 +130,9 @@ RUN source /opt/ros/humble/setup.bash && \
 	source /root/ptz_ws/install/setup.bash && \
 	colcon build
 # recompile axis msgs because it fails first time
-WORKDIR /root/ptz_ws	
-RUN source /opt/ros/humble/setup.bash && \
-	source /root/ptz_ws/install/setup.bash && \
-	colcon build --packages-select axis_msgs
+# WORKDIR /root/ptz_ws	
+# RUN source /opt/ros/humble/setup.bash && \
+# 	source /root/ptz_ws/install/setup.bash && \
+# 	colcon build --packages-select axis_msgs
 
 

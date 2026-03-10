@@ -142,6 +142,31 @@ The command will:
 5. A `fake_axis_camera_node` is launched to mimic the axis camera interface.
 6. RViz2 is started with a default configuration from the `ptz_manager` package so you can visualize the camera and TF frames.
 
+## Complete Motion Stack Integration 
+
+**🚁 For Leonardo Drone Contest 2025 development:**
+
+The PTZ motion stack can run in **simulation** using a **dual-container architecture**:
+
+- **Main Container**: Runs simulation (UAV + PTZ + rover world) - follow **uav_motion_stack** instructions
+- **PTZ Container**: Runs motion stack (ptz_manager + SEED commands + YOLO + QR scanning)
+
+### Quick Start:
+```bash  
+# Terminal 1 - Main Container (simulation)
+ros2 launch <uav_motion_stack_simulation_launch>  # Follow uav_motion_stack guide
+
+# Terminal 2 - PTZ Container (motion stack)  
+ros2 launch ptz_manager ptz_navigation_stack.launch.py
+
+# Terminal 3 - Send SEED commands
+ros2 topic pub --once /seed_pdt_camera/command std_msgs/msg/String "data: 'cover(null,34,1,0:10:00)'"
+```
+
+**📖 See `README_SIMULATION_INTEGRATION.md` for complete integration guide.**
+
+This provides **hardware-identical** motion stack behavior in simulation with **ZOOM NOW WORKING**! ✅
+
 ## Run the software with hardware
 Inside the container, run the following command:
 

@@ -25,4 +25,4 @@
 [submodule "src/ptz_gz_sim"]
 	path = src/ptz_gz_sim
 	url = https://github.com/Prisma-Drone-Team/ptz_gz_sim.git
-	branch = master
+	branch = gz_garden

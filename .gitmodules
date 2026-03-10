@@ -1,7 +1,7 @@
 [submodule "src/ptz_manager"]
 	path = src/ptz_manager
 	url = https://github.com/Prisma-Drone-Team/ptz_manager
-	branch = MDPI-drones
+	branch = multi
 [submodule "src/axis_camera"]
 	path = src/axis_camera
 	url = https://github.com/pakocero/axis_camera

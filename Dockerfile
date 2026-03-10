@@ -32,7 +32,7 @@ RUN pip install ros2_numpy
 # create workspace
 RUN mkdir -p ptz_ws/src
 WORKDIR /root/ptz_ws/
-RUN source /opt/ros/humble/setup.bash && colcon build
+RUN source /opt/ros/humble/setup.bash && colcon build --packages-skip ptz_gz_sim
 
 # setup .bashrc
 RUN echo "" >> /root/.bashrc
@@ -68,7 +68,7 @@ RUN source /opt/ros/humble/setup.bash && \
     
 RUN source /opt/ros/humble/setup.bash && \
 	source /root/ptz_ws/install/setup.bash && \
-	colcon build
+	colcon build --packages-skip ptz_gz_sim
 # recompile axis msgs because it fails first time
 WORKDIR /root/ptz_ws	
 RUN source /opt/ros/humble/setup.bash && \
